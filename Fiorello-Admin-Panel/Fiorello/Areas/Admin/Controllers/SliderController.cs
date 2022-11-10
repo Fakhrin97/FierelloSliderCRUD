@@ -31,9 +31,9 @@ namespace Fiorello.Areas.Admin.Controllers
 
             return View(new SliderUpdateDto
             {
-                Title=slider.Title, 
-                Subtitle=slider.Subtitle,   
-                ImageUrl=slider.ImgUrl,
+                Title = slider.Title,
+                Subtitle = slider.Subtitle,
+                ImageUrl = slider.ImgUrl,
             });
         }
         [HttpPost]
@@ -43,46 +43,54 @@ namespace Fiorello.Areas.Admin.Controllers
             var slider = await _dbContext.Sliders
                 .FirstOrDefaultAsync();
 
-            if (!ModelState.IsValid)
+            if (model.ImageUrl == "")
             {
-                return View(new SliderUpdateDto
+                model.ImageUrl = slider.ImgUrl;
+            }
+            else
+            {
+                if (!ModelState.IsValid)
                 {
-                    Title = slider.Title,
-                    Subtitle = slider.Subtitle,
-                    ImageUrl = slider.ImgUrl,
-                });
+                    return View(new SliderUpdateDto
+                    {
+                        Title = slider.Title,
+                        Subtitle = slider.Subtitle,
+                        ImageUrl = slider.ImgUrl,
+                    });
+                }
+
+                if (!model.Image.IsImage())
+                {
+                    ModelState.AddModelError("Image", "Yalniz Shekil Kecin");
+
+                    return View(new SliderUpdateDto
+                    {
+                        Title = slider.Title,
+                        Subtitle = slider.Subtitle,
+                        ImageUrl = slider.ImgUrl,
+                    });
+                }
+
+                if (!model.Image.IsAllowedSize(2))
+                {
+                    ModelState.AddModelError("Image", "Sheklin Hecmi 1MB-dan Az Olmalidi");
+
+                    return View(new SliderImageUpdateDto
+                    {
+                        ImageUrl = slider.ImgUrl,
+                    });
+                }
+                var path = Path.Combine(Constants.RootPath, "img", slider.ImgUrl);
+
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+
+                var unicalName = await model.Image.GenerateFile(Constants.RootPath);
+
+                slider.ImgUrl = unicalName;
             }
 
-            if (!model.Image.IsImage())
-            {
-                ModelState.AddModelError("Image", "Yalniz Shekil Kecin");
 
-                return View(new SliderUpdateDto
-                {
-                    Title = slider.Title,
-                    Subtitle = slider.Subtitle,
-                    ImageUrl = slider.ImgUrl,
-                });
-            }
-
-            if (!model.Image.IsAllowedSize(2))
-            {
-                ModelState.AddModelError("Image", "Sheklin Hecmi 1MB-dan Az Olmalidi");
-
-                return View(new SliderImageUpdateDto
-                {
-                    ImageUrl = slider.ImgUrl,
-                });
-            }
-
-            var path = Path.Combine(Constants.RootPath, "img", slider.ImgUrl);
-
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
-
-            var unicalName = await model.Image.GenerateFile(Constants.RootPath);
-
-            slider.ImgUrl = unicalName;
             slider.Subtitle = model.Subtitle;
             slider.Title = model.Title;
 
