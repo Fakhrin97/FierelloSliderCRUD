@@ -2,13 +2,14 @@
 using Fiorello.Areas.Admin.Models;
 using Fiorello.DAL;
 using Fiorello.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fiorello.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    public class SliderImageController : Controller
+ 
+    public class SliderImageController : BaseController
     {
         private readonly AppDbContext _dbContext;
 
@@ -29,6 +30,7 @@ namespace Fiorello.Areas.Admin.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SliderImageDto model)

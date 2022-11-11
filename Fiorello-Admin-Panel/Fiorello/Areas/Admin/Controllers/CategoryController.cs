@@ -1,14 +1,16 @@
 ﻿using Fiorello.Areas.Admin.Models;
 using Fiorello.DAL;
 using Fiorello.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 
 namespace Fiorello.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    public class CategoryController : Controller
+   
+    public class CategoryController : BaseController
     {
         private readonly AppDbContext _dbContext;
 

@@ -4,11 +4,12 @@ using Fiorello.Areas.Admin.Data;
 using Fiorello.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Fiorello.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    public class SliderController : Controller
+   
+    public class SliderController : BaseController
     {
         private readonly AppDbContext _dbContext;
 
@@ -89,7 +90,6 @@ namespace Fiorello.Areas.Admin.Controllers
 
                 slider.ImgUrl = unicalName;
             }
-
 
             slider.Subtitle = model.Subtitle;
             slider.Title = model.Title;
